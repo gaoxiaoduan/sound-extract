@@ -1,11 +1,11 @@
-import "./App.css";
+import { IndexPage } from './pages';
 
 function App() {
-    return (
-        <>
-            <button className="btn text-3xl">123</button>
-        </>
-    );
+  return (
+    <>
+      <IndexPage />
+    </>
+  );
 }
 
 export default App;
