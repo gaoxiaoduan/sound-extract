@@ -1,9 +1,12 @@
-import { IndexPage } from './pages';
+import { Layout } from "./layout";
+import { Mp4ToMp3 } from "./pages";
 
 function App() {
   return (
     <>
-      <IndexPage />
+      <Layout>
+        <Mp4ToMp3 />
+      </Layout>
     </>
   );
 }
