@@ -1,3 +1,9 @@
 # sound-extract
 
-> Extracts sound from mp4 video files
+> Extracts sound from video files
+
+## Install and Start
+
+```
+pnpm install & pnpm dev
+```
