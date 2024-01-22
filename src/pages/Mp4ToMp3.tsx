@@ -1,5 +1,5 @@
 import { useLoadFfmpeg } from "../hooks/useLoadFfmpeg.ts";
-import { PageLoading } from "../compoents";
+import { messageApi, PageLoading } from "../compoents";
 import { ChangeEvent, useRef, useState } from "react";
 import { useForceUpdate } from "../hooks/useForceUpdate.ts";
 
@@ -59,6 +59,7 @@ export const Mp4ToMp3 = () => {
         });
         urlRef.current = URL.createObjectURL(blob); // 保存下载blob的URL
         setIsConvertSuccess(true);
+        messageApi.success("提取成功!");
       };
     } catch (e) {
       console.error(e);
@@ -89,7 +90,6 @@ export const Mp4ToMp3 = () => {
           在线免费提取您的视频文件(mp4、mov...)为mp3文件
         </span>
       </div>
-
       <div className="card card-side bg-neutral-600 w-[70%] shadow-xl">
         <div className="card-body w-[70%]">
           <input
@@ -117,7 +117,7 @@ export const Mp4ToMp3 = () => {
 
           {currentProgress > 0 && (
             <progress
-              className={`progress w-full ${isSuccess ? "progress-success" : "progress-info"}`}
+              className={`progress w-full ${currentProgress >= 100 ? "progress-success" : "progress-info"}`}
               value={currentProgress}
               max="100"
             />
