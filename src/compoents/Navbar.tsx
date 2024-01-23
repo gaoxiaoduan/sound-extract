@@ -19,7 +19,7 @@ export const Navbar = () => {
                 type="checkbox"
                 className="theme-controller"
                 onClick={() => {
-                  setTheme(theme === "forest" ? "garden" : "forest");
+                  setTheme(theme === "dim" ? "garden" : "dim");
                 }}
               />
               <MaterialSymbolsLightLightModeOutline className="swap-on h-6 w-6" />

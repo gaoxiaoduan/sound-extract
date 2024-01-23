@@ -90,29 +90,31 @@ export const Mp4ToMp3 = () => {
           在线免费提取您的视频文件(mp4、mov...)为mp3文件
         </span>
       </div>
-      <div className="card card-side bg-neutral-600 w-[70%] shadow-xl">
-        <div className="card-body w-[70%]">
+      <div className="card card-side bg-neutral-600 shadow-xl w-[95%] lg:w-[60%] flex-col md:flex-row">
+        <div className="card-body md:w-[70%] py-4">
           <input
             type="file"
-            className="file-input file-input-bordered w-full max-w-lg self-end"
+            className="file-input file-input-bordered w-full self-end"
             onChange={onChange}
             accept="video/mp4,video/*"
             disabled={currentProgress > 0 || isConvertSuccess}
           />
         </div>
 
-        <div className="card-body w-[30%]">
+        <div className="card-body md:w-[30%] py-4">
           {isSuccess ? (
             <button className="btn btn-success" onClick={handleDownload}>
               下载
             </button>
           ) : (
-            <button
-              className={`btn ${fileRef.current ? "btn-primary" : "btn-disabled"}`}
-              onClick={handleConvert}
-            >
-              提取
-            </button>
+            <div className="tooltip w-full" data-tip="从文件中提取声音">
+              <button
+                className={`btn ${fileRef.current ? "btn-primary" : "btn-disabled"} w-full`}
+                onClick={handleConvert}
+              >
+                提取
+              </button>
+            </div>
           )}
 
           {currentProgress > 0 && (

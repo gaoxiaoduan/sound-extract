@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-type themeType = "garden" | "forest";
+type themeType = "garden" | "dim";
 
 export const useTheme = () => {
   const [theme, setTheme] = useState(() => {
@@ -17,7 +17,7 @@ export const useTheme = () => {
     window.localStorage.setItem("theme", theme);
 
     const handleColorSchemeChange = (e: MediaQueryListEvent) => {
-      const newColorScheme = e.matches ? "forest" : "garden";
+      const newColorScheme = e.matches ? "dim" : "garden";
       setTheme(newColorScheme);
       window.localStorage.setItem("theme", newColorScheme);
     };
