@@ -5,7 +5,7 @@ import { toBlobURL } from "@ffmpeg/util";
 /**
  * cdn地址
  */
-const BASE_URL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
+const BASE_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm";
 
 export const useLoadFfmpeg = () => {
   const ffmpegRef = useRef<FFmpeg>(new FFmpeg());
