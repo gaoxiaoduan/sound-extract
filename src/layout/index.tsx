@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import { Navbar } from "../compoents";
+import { Navbar } from "../components";
 
 export const Layout: FC<{
   children: ReactNode;

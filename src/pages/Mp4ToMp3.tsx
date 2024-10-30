@@ -1,5 +1,5 @@
 import { useLoadFfmpeg } from "../hooks/useLoadFfmpeg.ts";
-import { messageApi, PageLoading } from "../compoents";
+import { messageApi, PageLoading } from "../components";
 import { ChangeEvent, useRef, useState } from "react";
 import { useForceUpdate } from "../hooks/useForceUpdate.ts";
 
@@ -10,6 +10,7 @@ export const Mp4ToMp3 = () => {
   const resultFileNameRef = useRef<string>(""); // 用于保存转换后的文件名
   const [currentProgress, setCurrentProgress] = useState(0);
   const [isConvertSuccess, setIsConvertSuccess] = useState(false); // 是否转换成功
+  const [isConverting, setIsConverting] = useState(false); // 是否正在转换中
 
   const forceUpdate = useForceUpdate();
 
@@ -29,44 +30,65 @@ export const Mp4ToMp3 = () => {
 
   const handleConvert = async () => {
     if (!fileRef.current) return;
+
     try {
+      setIsConverting(true); // 开始转换时设置状态
       setIsConvertSuccess(false);
       const ffmpeg = ffmpegRef.current;
       const file = fileRef.current;
+
       const resultFileName = resultFileNameRef.current;
       const fileReader = new FileReader();
 
       // 进度条
       ffmpeg.on("progress", ({ progress }) => {
-        setCurrentProgress(progress * 100);
-        setIsConvertSuccess(true);
+        const progressValue = progress * 100;
+        setCurrentProgress(progressValue);
+        if (progressValue >= 100) {
+          setIsConverting(false);
+        }
       });
 
       // 1. 读取文件
       fileReader.readAsArrayBuffer(file);
       fileReader.onload = async (event) => {
-        if (event.type !== "load") return;
-        const fileResult = fileReader.result as ArrayBuffer;
-        if (fileResult.byteLength === 0) return;
-        await ffmpeg.writeFile(`${file.name}`, new Uint8Array(fileResult));
+        try {
+          if (event.type !== "load") return;
+          const fileResult = fileReader.result as ArrayBuffer;
+          if (fileResult.byteLength === 0) return;
+          await ffmpeg.writeFile(`${file.name}`, new Uint8Array(fileResult));
 
-        // 2. 转换文件
-        await ffmpeg.exec(["-i", `${file.name}`, `${resultFileName}`]);
+          // 2. 转换文件
+          await ffmpeg.exec(["-i", `${file.name}`, `${resultFileName}`]);
 
-        const data = await ffmpeg.readFile(`${resultFileName}`);
-        const blob = new Blob([(data as Uint8Array).buffer], {
-          type: "audio/mpeg",
-        });
-        urlRef.current = URL.createObjectURL(blob); // 保存下载blob的URL
-        setIsConvertSuccess(true);
-        messageApi.success("提取成功!");
+          const data = await ffmpeg.readFile(`${resultFileName}`);
+          const blob = new Blob([(data as Uint8Array).buffer], {
+            type: "audio/mpeg",
+          });
+          urlRef.current = URL.createObjectURL(blob); // 保存下载blob的URL
+          setCurrentProgress(100); // 确保进度条到达100%
+          setIsConvertSuccess(true);
+          messageApi.success("提取成功!");
+        } catch (e) {
+          console.error("转换失败", e);
+          setIsConverting(false);
+          setCurrentProgress(0);
+          setIsConvertSuccess(false);
+          messageApi.error("转换失败，请重试");
+        }
       };
     } catch (e) {
-      console.error(e);
+      console.error("转换失败", e);
+      // 添加错误处理
+      setIsConverting(false);
+      setCurrentProgress(0);
+      setIsConvertSuccess(false);
+      messageApi.error("转换失败，请重试");
     }
   };
 
   const handleDownload = async () => {
+    setIsConverting(false);
     setCurrentProgress(0);
     setIsConvertSuccess(false);
     if (!urlRef.current) return;
@@ -109,10 +131,11 @@ export const Mp4ToMp3 = () => {
           ) : (
             <div className="tooltip w-full" data-tip="从文件中提取声音">
               <button
-                className={`btn ${fileRef.current ? "btn-primary" : "btn-disabled"} w-full`}
+                className={`btn ${fileRef.current && !isConverting ? "btn-primary" : "btn-disabled"} w-full`}
                 onClick={handleConvert}
+                disabled={isConverting}
               >
-                提取
+                {isConverting ? "转换中..." : "开始提取"}
               </button>
             </div>
           )}

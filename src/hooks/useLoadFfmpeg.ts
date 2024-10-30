@@ -4,8 +4,9 @@ import { toBlobURL } from "@ffmpeg/util";
 
 /**
  * cdn地址
+ * 知乎的unpkg
  */
-const BASE_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm";
+const BASE_URL = "https://unpkg.zhihu.com/@ffmpeg/core-mt@0.12.6/dist/esm";
 
 export const useLoadFfmpeg = () => {
   const ffmpegRef = useRef<FFmpeg>(new FFmpeg());
@@ -25,6 +26,7 @@ export const useLoadFfmpeg = () => {
         `${BASE_URL}/ffmpeg-core.wasm`,
         "application/wasm",
       ),
+      workerURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.worker.js`, 'text/javascript'),
     });
 
     setLoading(false);
