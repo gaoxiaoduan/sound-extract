@@ -3,23 +3,30 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { toBlobURL } from "@ffmpeg/util";
 
 /**
- * 检查环境是否支持 SharedArrayBuffer
+ * 检查 Worker 和 SharedArrayBuffer 支持
  */
-const checkSharedArrayBufferSupport = () => {
+const checkEnvironmentSupport = () => {
   try {
-    return typeof SharedArrayBuffer !== 'undefined';
+    return {
+      hasWorker: typeof Worker !== 'undefined',
+      hasSharedArrayBuffer: typeof SharedArrayBuffer !== 'undefined'
+    };
   } catch {
-    return false;
+    return {
+      hasWorker: false,
+      hasSharedArrayBuffer: false
+    };
   }
 };
 
-const hasSAB = checkSharedArrayBufferSupport();
+const { hasWorker, hasSharedArrayBuffer } = checkEnvironmentSupport();
+const isMultiThreadSupported = hasWorker && hasSharedArrayBuffer;
 
 /**
  * cdn地址
  * 知乎的unpkg
  */
-const BASE_URL = hasSAB
+const BASE_URL = isMultiThreadSupported
   ? "https://unpkg.zhihu.com/@ffmpeg/core-mt@0.12.6/dist/esm"
   : "https://unpkg.zhihu.com/@ffmpeg/core@0.12.6/dist/esm";
 
@@ -41,7 +48,7 @@ export const useLoadFfmpeg = () => {
         `${BASE_URL}/ffmpeg-core.wasm`,
         "application/wasm",
       ),
-      ...(hasSAB && {
+      ...(isMultiThreadSupported && {
         workerURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.worker.js`, 'text/javascript'),
       }),
     });
