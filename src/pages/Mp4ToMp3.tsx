@@ -62,6 +62,7 @@ export const Mp4ToMp3 = () => {
           await ffmpeg.exec(["-i", `${file.name}`, `${resultFileName}`]);
 
           const data = await ffmpeg.readFile(`${resultFileName}`);
+          // @ts-expect-error 忽略类型检查 因为ffmpeg.readFile返回的类型是any
           const blob = new Blob([(data as Uint8Array).buffer], {
             type: "audio/mpeg",
           });

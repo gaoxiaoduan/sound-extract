@@ -26,11 +26,11 @@ const isMultiThreadSupported = hasWorker && hasSharedArrayBuffer;
 
 /**
  * cdn地址
- * 知乎的unpkg
+ * 使用 jsDelivr
  */
 const BASE_URL = isMultiThreadSupported
-  ? "https://unpkg.zhihu.com/@ffmpeg/core-mt@0.12.6/dist/esm"
-  : "https://unpkg.zhihu.com/@ffmpeg/core@0.12.6/dist/esm";
+  ? "https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt@0.12.6/dist/esm"
+  : "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm";
 
 export const useLoadFfmpeg = () => {
   const ffmpegRef = useRef<FFmpeg>(new FFmpeg());
