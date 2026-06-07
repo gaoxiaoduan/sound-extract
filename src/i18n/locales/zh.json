@@ -1,11 +1,18 @@
 {
   "title": "声音提取器",
-  "subtitle": "在线免费提取您的视频文件(mp4、mov...)为mp3文件",
-  "start": "开始提取",
-  "converting": "转换中...",
-  "download": "下载",
-  "success": "提取成功!",
+  "subtitle": "安全、纯本地的视频音频分离工具。文件完全在浏览器中处理，绝不上传到任何服务器。",
+  "start": "开始提取音频",
+  "loading_engine": "正在加载 FFmpeg 核心...",
+  "converting": "正在转换中...",
+  "download": "下载音频文件 (MP3)",
+  "success": "音频提取成功!",
   "error": "转换失败，请重试",
   "load_error": "加载FFmpeg失败,请重试",
-  "tooltip": "从文件中提取声音"
+  "tooltip": "从文件中提取声音",
+  "drag_active": "松开鼠标以上传文件",
+  "drag_instructions": "拖拽视频文件到此处，或点击浏览本地文件",
+  "support_formats": "支持 MP4, MOV, AVI, MKV 等所有主流视频格式",
+  "privacy_note": "100% 隐私安全。处理在本地完成，无网络传输。",
+  "bitrate": "输出音频码率 (Bitrate)",
+  "reset": "重新选择"
 }
