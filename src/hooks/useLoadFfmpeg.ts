@@ -24,13 +24,7 @@ const { hasWorker, hasSharedArrayBuffer } = checkEnvironmentSupport();
 
 const isMultiThreadSupported = hasWorker && hasSharedArrayBuffer;
 
-/**
- * cdn地址
- * 使用 jsDelivr
- */
-const BASE_URL = isMultiThreadSupported
-  ? "https://cdn.jsdelivr.net/npm/@ffmpeg/core-mt@0.12.6/dist/esm"
-  : "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm";
+const BASE_URL = `${window.location.origin}/ffmpeg/${isMultiThreadSupported ? 'core-mt' : 'core'}`;
 
 export const useLoadFfmpeg = () => {
   const ffmpegRef = useRef<FFmpeg>(new FFmpeg());

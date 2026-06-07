@@ -4,14 +4,16 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "copy-ffmpeg": "node scripts/copy-ffmpeg.js",
+    "dev": "npm run copy-ffmpeg && vite",
+    "build": "npm run copy-ffmpeg && tsc && vite build",
     "format": "prettier --write --cache .",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@ffmpeg/core-mt": "^0.12.10",
+    "@ffmpeg/core": "0.12.6",
+    "@ffmpeg/core-mt": "^0.12.6",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
     "@types/react": "^19.2.17",

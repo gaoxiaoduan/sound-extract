@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# FFmpeg assets (generated on build/dev)
+/public/ffmpeg

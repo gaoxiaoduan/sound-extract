@@ -8,9 +8,12 @@ importers:
 
   .:
     devDependencies:
+      '@ffmpeg/core':
+        specifier: 0.12.6
+        version: 0.12.6
       '@ffmpeg/core-mt':
-        specifier: ^0.12.10
-        version: 0.12.10
+        specifier: ^0.12.6
+        version: 0.12.6
       '@ffmpeg/ffmpeg':
         specifier: ^0.12.15
         version: 0.12.15
@@ -66,8 +69,12 @@ packages:
   '@emnapi/wasi-threads@1.2.1':
     resolution: {integrity: sha512-uTII7OYF+/Mes/MrcIOYp5yOtSMLBWSIoLPpcgwipoiKbli6k322tcoFsxoIIxPDqW01SQGAgko4EzZi2BNv2w==}
 
-  '@ffmpeg/core-mt@0.12.10':
-    resolution: {integrity: sha512-atyRTOpa58bLCIgd6GXBZAXWyWD3AUoQyzxqjvGhp9MuSzdILtOTI62ffLswBsCnLq15lQ8IETHUpm1oe4V9FQ==}
+  '@ffmpeg/core-mt@0.12.6':
+    resolution: {integrity: sha512-f7wrOeUk24VFRi2Gfsp/mwwkK1hbDV0ajgm2fOU/oRi+IDullyzAYdHOagAWfpSZXcTPAGZ1Ild7HmBwr3k2tg==}
+    engines: {node: '>=16.x'}
+
+  '@ffmpeg/core@0.12.6':
+    resolution: {integrity: sha512-PrjWBTfGn2WVn9T7wGnzfFwChbqWeZc7tM9vvJZVRadYFUDakfzy7W0LpYC0cvvK0xT82qlBsk38lQhJ/Hps5A==}
     engines: {node: '>=16.x'}
 
   '@ffmpeg/ffmpeg@0.12.15':
@@ -550,7 +557,9 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@ffmpeg/core-mt@0.12.10': {}
+  '@ffmpeg/core-mt@0.12.6': {}
+
+  '@ffmpeg/core@0.12.6': {}
 
   '@ffmpeg/ffmpeg@0.12.15':
     dependencies:
