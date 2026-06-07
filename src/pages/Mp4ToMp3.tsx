@@ -1,12 +1,11 @@
-import { useLoadFfmpeg } from "../hooks/useLoadFfmpeg";
 import { messageApi } from "../components";
 import { ChangeEvent, useRef, useState, DragEvent } from "react";
 import { useForceUpdate } from "../hooks/useForceUpdate";
 import { useTranslation } from "react-i18next";
+import { extractAudioFromVideo } from "../utils/audioExtractor";
 
 export const Mp4ToMp3 = () => {
   const { t } = useTranslation();
-  const { loading, loaded, loadFfmpeg, ffmpegRef } = useLoadFfmpeg();
   
   const fileRef = useRef<File | null>(null);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
@@ -58,7 +57,7 @@ export const Mp4ToMp3 = () => {
   };
 
   const triggerFileSelect = () => {
-    if (isConverting || loading) return;
+    if (isConverting) return;
     fileInputRef.current?.click();
   };
 
@@ -81,59 +80,25 @@ export const Mp4ToMp3 = () => {
       setDownloadUrl(null);
       setCurrentProgress(0);
 
-      if (!loaded) {
-        await loadFfmpeg();
-      }
-
-      const ffmpeg = ffmpegRef.current;
       const file = fileRef.current;
-      const resultFileName = resultFileNameRef.current;
-      const fileReader = new FileReader();
 
-      ffmpeg.on("progress", ({ progress }) => {
-        const progressValue = Math.min(Math.round(progress * 100), 99);
-        setCurrentProgress(progressValue);
+      const mp3Blob = await extractAudioFromVideo(file, {
+        bitrate,
+        onProgress: (progress) => {
+          setCurrentProgress(progress);
+        }
       });
 
-      fileReader.readAsArrayBuffer(file);
-      fileReader.onload = async (event) => {
-        try {
-          if (event.type !== "load") return;
-          const fileResult = fileReader.result as ArrayBuffer;
-          if (fileResult.byteLength === 0) return;
-          
-          await ffmpeg.writeFile(`${file.name}`, new Uint8Array(fileResult));
-
-          // Run FFmpeg with chosen bitrate
-          await ffmpeg.exec([
-            "-i", `${file.name}`,
-            "-b:a", bitrate,
-            "-map", "a", // extract audio channel only
-            `${resultFileName}`
-          ]);
-
-          const data = await ffmpeg.readFile(`${resultFileName}`);
-          const blob = new Blob([data as any], {
-            type: "audio/mpeg",
-          });
-          
-          const url = URL.createObjectURL(blob);
-          setDownloadUrl(url);
-          setCurrentProgress(100);
-          setIsConverting(false);
-          messageApi.success(t("success"));
-        } catch (e) {
-          console.error(e);
-          setIsConverting(false);
-          setCurrentProgress(0);
-          messageApi.error(t("error"));
-        }
-      };
-    } catch (e) {
+      const url = URL.createObjectURL(mp3Blob);
+      setDownloadUrl(url);
+      setCurrentProgress(100);
+      setIsConverting(false);
+      messageApi.success(t("success"));
+    } catch (e: any) {
       console.error(e);
       setIsConverting(false);
       setCurrentProgress(0);
-      messageApi.error(t("error"));
+      messageApi.error(t("error") + (e.message ? `: ${e.message}` : ''));
     }
   };
 
@@ -154,8 +119,6 @@ export const Mp4ToMp3 = () => {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
-
-  const isBusy = isConverting || loading;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 1rem' }} className="animate-fade-in">
@@ -220,7 +183,7 @@ export const Mp4ToMp3 = () => {
                 <p className="file-name">{fileRef.current.name}</p>
                 <p className="file-meta">{formatSize(fileRef.current.size)}</p>
               </div>
-              {!isBusy && !downloadUrl && (
+              {!isConverting && !downloadUrl && (
                 <button className="btn-icon-only" onClick={removeFile} title={t('reset')}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18" />
@@ -231,7 +194,7 @@ export const Mp4ToMp3 = () => {
             </div>
 
             {/* Bitrate Selector (Only show before conversion is done) */}
-            {!downloadUrl && !isBusy && (
+            {!downloadUrl && !isConverting && (
               <div className="option-group">
                 <p className="option-title">{t('bitrate')}</p>
                 <div className="bitrate-options">
@@ -258,11 +221,11 @@ export const Mp4ToMp3 = () => {
             )}
 
             {/* Conversion status & Progress bar */}
-            {isBusy && (
+            {isConverting && (
               <div className="progress-card">
                 <div className="progress-header">
                   <span className="progress-status">
-                    {loading ? t('loading_engine') : t('converting')}
+                    {t('converting')}
                   </span>
                   <span className="progress-percentage">{currentProgress}%</span>
                 </div>
@@ -270,15 +233,13 @@ export const Mp4ToMp3 = () => {
                   <div className="progress-fill" style={{ width: `${currentProgress}%` }}></div>
                 </div>
                 
-                {isConverting && (
-                  <div className="waveform-loader">
-                    <div className="wave-bar"></div>
-                    <div className="wave-bar"></div>
-                    <div className="wave-bar"></div>
-                    <div className="wave-bar"></div>
-                    <div className="wave-bar"></div>
-                  </div>
-                )}
+                <div className="waveform-loader">
+                  <div className="wave-bar"></div>
+                  <div className="wave-bar"></div>
+                  <div className="wave-bar"></div>
+                  <div className="wave-bar"></div>
+                  <div className="wave-bar"></div>
+                </div>
               </div>
             )}
 
@@ -329,16 +290,16 @@ export const Mp4ToMp3 = () => {
                 <button
                   className="btn-modern"
                   onClick={handleConvert}
-                  disabled={isBusy}
+                  disabled={isConverting}
                 >
-                  {!isBusy && (
+                  {!isConverting && (
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M4 11a9 9 0 0 1 9 9" />
                       <path d="M4 4a16 16 0 0 1 16 16" />
                       <circle cx="5" cy="19" r="1" />
                     </svg>
                   )}
-                  {isBusy ? (loading ? t('loading_engine') : t('converting')) : t('start')}
+                  {isConverting ? t('converting') : t('start')}
                 </button>
               )}
             </div>
