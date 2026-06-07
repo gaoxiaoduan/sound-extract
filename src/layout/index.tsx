@@ -7,7 +7,7 @@ export const Layout: FC<{
   return (
     <>
       <Navbar />
-      <div className="container mx-auto">{children}</div>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%' }}>{children}</div>
     </>
   );
 };

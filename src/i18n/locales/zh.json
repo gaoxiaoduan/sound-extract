@@ -1,0 +1,11 @@
+{
+  "title": "声音提取器",
+  "subtitle": "在线免费提取您的视频文件(mp4、mov...)为mp3文件",
+  "start": "开始提取",
+  "converting": "转换中...",
+  "download": "下载",
+  "success": "提取成功!",
+  "error": "转换失败，请重试",
+  "load_error": "加载FFmpeg失败,请重试",
+  "tooltip": "从文件中提取声音"
+}

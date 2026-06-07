@@ -23,7 +23,26 @@ export const Alert: FC<IAlertSuccessProps> = ({ message = "", type = 'success' }
 const createMessage = (message: string, type: MessageType) => {
   const container = document.createElement("div");
   container.role = "alert";
-  container.className = `alert alert-${type} shadow-lg fixed top-[8px] w-auto left-1/2 transform -translate-x-1/2 z-50 transition duration-300`;
+  
+  const bgColor = type === 'success' ? '#10b981' : '#ef4444';
+  
+  container.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background-color: ${bgColor};
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease;
+  `;
 
   document.body.appendChild(container);
   ReactDOM.createRoot(container).render(<Alert message={message} type={type} />);

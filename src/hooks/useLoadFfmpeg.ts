@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { toBlobURL } from "@ffmpeg/util";
 import { messageApi } from "../components";
@@ -35,32 +35,28 @@ const BASE_URL = isMultiThreadSupported
 export const useLoadFfmpeg = () => {
   const ffmpegRef = useRef<FFmpeg>(new FFmpeg());
   const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    load().catch((e) => {
+  const loadFfmpeg = async () => {
+    if (loaded) return;
+    setLoading(true);
+    try {
+      const ffmpeg = ffmpegRef.current;
+      await ffmpeg.load({
+        coreURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.js`, "text/javascript"),
+        wasmURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.wasm`, "application/wasm"),
+        ...(isMultiThreadSupported && {
+          workerURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.worker.js`, 'text/javascript'),
+        }),
+      });
+      setLoaded(true);
+    } catch (e) {
       messageApi.error("加载FFmpeg失败,请重试");
       console.error("加载FFmpeg失败,请重试", e);
+    } finally {
       setLoading(false);
-    });
-  }, []);
-
-  const load = async () => {
-    setLoading(true);
-
-    const ffmpeg = ffmpegRef.current;
-    await ffmpeg.load({
-      coreURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.js`, "text/javascript"),
-      wasmURL: await toBlobURL(
-        `${BASE_URL}/ffmpeg-core.wasm`,
-        "application/wasm",
-      ),
-      ...(isMultiThreadSupported && {
-        workerURL: await toBlobURL(`${BASE_URL}/ffmpeg-core.worker.js`, 'text/javascript'),
-      }),
-    });
-
-    setLoading(false);
+    }
   };
 
-  return { ffmpegRef, loading };
+  return { ffmpegRef, loading, loaded, loadFfmpeg };
 };

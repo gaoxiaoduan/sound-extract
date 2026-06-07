@@ -1,0 +1,11 @@
+{
+  "title": "Audio Extractor",
+  "subtitle": "Extract audio from your video files (mp4, mov...) to mp3 online for free",
+  "start": "Start Extracting",
+  "converting": "Converting...",
+  "download": "Download",
+  "success": "Extraction Successful!",
+  "error": "Conversion failed, please try again",
+  "load_error": "Failed to load FFmpeg, please try again",
+  "tooltip": "Extract audio from file"
+}
